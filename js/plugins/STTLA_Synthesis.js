@@ -1,7 +1,7 @@
 /*
 //==============================================================================
- ■ 合成系統 v1.0
-    最後更新：2017/2/9
+ ■ 合成系統 v1.2
+    最後更新：2017/2/16
 	http://home.gamer.com.tw/homeindex.php?owner=qootm2
 	https://twitter.com/STILILA
 ==============================================================================
@@ -47,6 +47,14 @@
  * @desc 切換模式說明
  * @default TAB鍵切換所需素材／道具素質
  
+ * @param Mode HelpText2
+ * @desc 切換模式說明2
+ * @default Q、W鍵切換製作種類
+ 
+ * @param Mode Help Change
+ * @desc 切換說明等待時間
+ * @default 120
+ 
  * @param SE
  * @desc 合成SE 名稱,音量,頻率
  * @default Item3,90,100
@@ -74,8 +82,7 @@
  * @param Text PageItem
  * @desc 用語：「道具合成」
  * @default 道具合成
- 
- 
+
  * @param Text PageWeapon
  * @desc 用語：「武器合成」
  * @default 武器合成
@@ -122,11 +129,20 @@
  
 @help
 --------------------------------------------------------------------------
+ ● 更新履歷
+--------------------------------------------------------------------------
+* v1.2
+* 底部的說明視窗追加新說明，會定期切換
+* 增加2項插件參數 Mode HelpText2、Mode Help Change
+*
+* v1.1
+* 修正說明：SceneManager.call(Scene_Synthesis) => SceneManager.push(Scene_Synthesis) 
+--------------------------------------------------------------------------
  ● 使用法(上插件指令、下腳本指令)
 --------------------------------------------------------------------------
 1.呼叫合成畫面：
  * Synthesis open
- * SceneManager.call(Scene_Synthesis)
+ * SceneManager.push(Scene_Synthesis)
   
   ＜操作＞
  * Q、W：切換製作種類
@@ -158,7 +174,7 @@
  
     增加 3 號防具配方，並隱藏道具訊息
  * Synthesis add armor 5 true
- * $gameParty.addSynthesis('armor', 3，true)
+ * $gameParty.addSynthesis('armor', 3, true)
 ========================================================   
 3.移除配方：
  * Synthesis remove 種類 id
@@ -178,9 +194,7 @@
  * $gameParty.removeSynthesis('weapon', 5)
       
 */
-
-// 共通腳本檢測
-//if (typeof(STILILA) == 'undefined') {alert('未安裝STLLA_ScriptCore.js') ; window.close();}
+var STILILA = STILILA || {};
 STILILA.SYN = {};
 
 
@@ -212,7 +226,7 @@ STILILA.SYN.List = {
     // 萬能藥： 解毒劑x3
     8 : {'mi': {7: 3}, 'mw': {}, 'ma': {}},
     // 復活藥水
-    9 : {'mi': {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 20: 3}, 'mw': {}, 'ma': {}, 'success': 30, 'upgrade': 5, 'gold': 500}
+    //9 : {'mi': {1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 20: 3}, 'mw': {}, 'ma': {}, 'success': 30, 'upgrade': 5, 'gold': 500}
   },
   // ==== 武器
   'weapon' : {
@@ -253,6 +267,8 @@ STILILA.SYN.Garbage = (parameters['Garbage'].split(',') || [25,5,5]);
 STILILA.SYN.UnknownText = parameters['Unknown Name'] || '？？？';
 STILILA.SYN.UnknownHelpText = parameters['Unknown HelpText'] || '未知的道具，成功製作前無法確認。';
 STILILA.SYN.ModeHelpText = parameters['Mode HelpText'] || 'D鍵切換所需素材／道具素質';
+STILILA.SYN.ModeHelpText2 = parameters['Mode HelpText2'] || 'Q、W鍵切換製作種類';
+STILILA.SYN.ModeHelpChange = Number(parameters['Mode Help Change'] || 120);
 STILILA.SYN.SE = (parameters['SE'].split(',') || ['Item3', 90, 100]);
 
 STILILA.SYN.ResultText = parameters['Text Result'] || '合成結果…';
@@ -272,7 +288,6 @@ STILILA.SYN.AmountText = parameters['Text Amount'] || '數量';
 STILILA.SYN.SuccessText = parameters['Text Success'] || '成功率：';
 STILILA.SYN.CostText = parameters['Text Cost'] || '製作費用';
 STILILA.SYN.ParamText = parameters['Text Param'] || '素質';
-
 
 
 
@@ -444,6 +459,7 @@ Game_Temp.prototype.initialize = function() {
   
 })();  // (function() {
 
+
 //==============================================================================
 // ■ Scene_Synthesis
 //------------------------------------------------------------------------------
@@ -474,6 +490,9 @@ Scene_Synthesis.prototype.constructor = Scene_Synthesis;
     this.hide_right_window();
     this.msg_window_showing = false;
     this.now_index = -1; // 紀錄目前選項，刷新用 
+	
+    this.help_window2_wait = 0;
+    this.help_window2_help = 0;
   }
   
   //--------------------------------------------------------------------------
@@ -482,6 +501,9 @@ Scene_Synthesis.prototype.constructor = Scene_Synthesis;
   Scene_Synthesis.prototype.update = function() {
     Scene_MenuBase.prototype.update.call(this);
     
+	this.update_help_window2();
+	
+	
     // 顯示訊息中
     if (this.msg_window_showing && (Input.isTriggered('ok') || Input.isTriggered('cancel'))) {
       if (this.result_window.visible) {
@@ -550,8 +572,9 @@ Scene_Synthesis.prototype.constructor = Scene_Synthesis;
     this.gold_window = new Window_Gold(0,0);
     this.gold_window.x = Graphics.width - this.gold_window.width;
     this.gold_window.y = Graphics.height - this.gold_window.height;
-    this.help_window2 = new Window_Base(0, this.gold_window.y, Graphics.width - this.gold_window.width, 72)
-    this.help_window2.drawText(STILILA.SYN.ModeHelpText,0,0,this.help_window2.contentsWidth(),'center')
+    this.help_window2 = new Window_Base(0, this.gold_window.y, Graphics.width - this.gold_window.width, 72);
+    this.help_window2.drawText(STILILA.SYN.ModeHelpText,0,0,this.help_window2.contentsWidth(),'center');
+	this.help_window2.contentsOpacity = 0;
 	this.addChild(this.gold_window);
 	this.addChild(this.help_window2);
   }
@@ -631,6 +654,34 @@ Scene_Synthesis.prototype.constructor = Scene_Synthesis;
     this.msg_window.visible = false;
 	this.addChild(this.msg_window);
   }
+  
+  //--------------------------------------------------------------------------
+  // ● 更新底部說明視窗
+  //--------------------------------------------------------------------------
+  Scene_Synthesis.prototype.update_help_window2 = function() {
+    if (this.help_window2_wait > STILILA.SYN.ModeHelpChange) {
+      this.help_window2.contentsOpacity -= 26;
+      if (this.help_window2.contentsOpacity === 0) {
+        if (this.help_window2_help === 0) {
+          this.help_window2.contents.clear();
+          this.help_window2.drawText(STILILA.SYN.ModeHelpText2,0,0,this.help_window2.contentsWidth(),'center');
+          this.help_window2_wait = 0;
+          this.help_window2_help = 1;
+		} else {
+          this.help_window2.contents.clear();
+          this.help_window2.drawText(STILILA.SYN.ModeHelpText,0,0,this.help_window2.contentsWidth(),'center');
+          this.help_window2_wait = 0;
+          this.help_window2_help = 0;
+        }
+	  }
+    } else {
+      if (this.help_window2.contentsOpacity < 255) {
+        this.help_window2.contentsOpacity += 26;
+      }
+	}
+    this.help_window2_wait += 1;
+  }
+  
   //--------------------------------------------------------------------------
   // ● 隱藏右邊視窗
   //--------------------------------------------------------------------------
