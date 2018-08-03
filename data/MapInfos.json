@@ -1,18 +1,18 @@
 [
 null,
-{"id":1,"expanded":true,"name":"教室(回神前)","order":1,"parentId":0,"scrollX":1336,"scrollY":1805},
+{"id":1,"expanded":true,"name":"教室(回神前)","order":1,"parentId":0,"scrollX":1332,"scrollY":1125},
 {"id":2,"expanded":true,"name":"創世神迷宮","order":3,"parentId":0,"scrollX":5106.666666666667,"scrollY":3042.6666666666665},
 {"id":3,"expanded":false,"name":"初始地圖","order":4,"parentId":0,"scrollX":1440,"scrollY":845.3333333333334},
-{"id":4,"expanded":false,"name":"接見教皇","order":5,"parentId":0,"scrollX":1440,"scrollY":845.3333333333334},
-{"id":5,"expanded":true,"name":"阿瓦隆地圖","order":6,"parentId":0,"scrollX":3109.3333333333335,"scrollY":2600},
+{"id":4,"expanded":false,"name":"接見教皇","order":5,"parentId":0,"scrollX":1084,"scrollY":611},
+{"id":5,"expanded":true,"name":"阿瓦隆地圖","order":6,"parentId":0,"scrollX":3110,"scrollY":2601},
 {"id":6,"expanded":false,"name":"過渡地圖","order":8,"parentId":0,"scrollX":1461.3333333333333,"scrollY":1269.3333333333333},
-{"id":7,"expanded":true,"name":"巨石陣","order":11,"parentId":0,"scrollX":2160,"scrollY":1268},
+{"id":7,"expanded":true,"name":"巨石陣","order":11,"parentId":0,"scrollX":1332,"scrollY":845},
 {"id":8,"expanded":false,"name":"過場路邊2","order":9,"parentId":0,"scrollX":1440,"scrollY":845.3333333333334},
-{"id":9,"expanded":false,"name":"水晶棺石室","order":10,"parentId":0,"scrollX":1296,"scrollY":760.8},
-{"id":10,"expanded":true,"name":"城堡 1F","order":14,"parentId":0,"scrollX":1276.8,"scrollY":1048.8},
-{"id":11,"expanded":true,"name":"女主家","order":13,"parentId":0,"scrollX":1851.4285714285713,"scrollY":1086.857142857143},
-{"id":12,"expanded":false,"name":"城堡 2F","order":15,"parentId":0,"scrollX":1296,"scrollY":760.8},
+{"id":9,"expanded":false,"name":"水晶棺石室","order":10,"parentId":0,"scrollX":1084,"scrollY":611},
+{"id":10,"expanded":true,"name":"城堡 1F","order":14,"parentId":0,"scrollX":1068,"scrollY":1049},
+{"id":11,"expanded":true,"name":"女主家","order":13,"parentId":0,"scrollX":1084,"scrollY":611},
+{"id":12,"expanded":false,"name":"城堡 2F","order":15,"parentId":0,"scrollX":1068,"scrollY":829},
 {"id":13,"expanded":true,"name":"教室(回神後)","order":2,"parentId":1,"scrollX":2160,"scrollY":1268},
-{"id":14,"expanded":false,"name":"巨石陣迷宮","order":12,"parentId":7,"scrollX":1418.6666666666667,"scrollY":845.3333333333334},
-{"id":15,"expanded":false,"name":"吃角子老虎機(借放)","order":7,"parentId":5,"scrollX":1160.7272727272727,"scrollY":748.3636363636364}
+{"id":14,"expanded":false,"name":"巨石陣迷宮","order":12,"parentId":7,"scrollX":1332,"scrollY":595},
+{"id":15,"expanded":false,"name":"吃角子老虎機(借放)","order":7,"parentId":5,"scrollX":1068,"scrollY":611}
 ]

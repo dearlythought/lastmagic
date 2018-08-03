@@ -180,7 +180,7 @@
 */
 
 // 共通腳本檢測
-if (typeof(STILILA) == 'undefined') {alert('未安裝STLLA_ScriptCore.js') ; window.close();}
+//if (typeof(STILILA) == 'undefined') {alert('未安裝STLLA_ScriptCore.js') ; window.close();}
 STILILA.SYN = {};
 
 
